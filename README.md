@@ -1,5 +1,9 @@
 # stockchecker
 
+**Live Demo** - [https://thridev-stocksapp.netlify.app/](https://thridev-stocksapp.netlify.app/)
+
+## Screenshot
+![Site Screenshot](src/assets/screenshot.png)
 ## Project setup
 ```
 npm install
