@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-         <apexchart align="center" width="70%" height="300" type="bar" :options="options" :series="series"></apexchart>
+         <apexchart align="center" :width="getWidthForChart" height="300" type="bar" :options="options" :series="series"></apexchart>
 
        <!-- <select v-model="selectedStock">
              <option disabled value="">Please select one</option>
@@ -11,14 +11,15 @@
      <br/>
      <p>Please enter the stock code below. The Stock codes can be found <a href="http://eoddata.com/stocklist/NASDAQ.htm" target="_blank">here</a></p>
           <p v-if="showErrorMessage" style="color:red;">The Stock has already been added</p>
-
-     <input type="text" v-model="stockToCheck" placeholder="Enter the Stock code">
-     <button @click="addtoarray">Add</button>
-     <h3>The Selected Stocks are</h3>
+    <div class="inputforstockcode">
+         <input @keyup.enter="addtoarray" type="text" v-model="stockToCheck" placeholder="Enter the Stock code">
+          <button class="addbutton" @click="addtoarray">Add</button>
+    </div>
+     <h3 v-if="listOfSelectedStocks.length > 0">The Selected Stocks are</h3>
      <div class="stock-list-wrap">
       <ul class="stock-list">
           <li v-for="(obs,index) in listOfSelectedStocks" :key="index">
-            <span>{{obs}}</span>
+            <span><span>{{obs}}</span> <span>({{companyNames[index]}})</span></span>
             <button class="button" v-on:click="deleteFunc(index)">Delete</button>
           </li>
       </ul>
@@ -41,10 +42,12 @@ export default {
       listOfSelectedStocks: [],
       values: [],
       dataOfSelectedStocks: [],
+      companyNames:[],
       stockToCheck: '',
       selectedStock : '',
       selectedDelete:'',
       showErrorMessage: false,
+      hasElementBeenAdded : false,
       options: {
         chart: {
           id: 'vuechart-example'
@@ -57,6 +60,14 @@ export default {
         data: [],
         name : "stocks"
       }]
+    }
+  },
+  computed:{
+    getWidthForChart(){
+      if(this.listOfSelectedStocks.length < 2){
+        return "300px"
+      }
+      return `${this.listOfSelectedStocks.length * 150}px`
     }
   },
   methods:{
@@ -72,18 +83,24 @@ export default {
       console.log(this.listOfSelectedStocks+'')
       this.selectedStock = null
             this.selectedStock = null
-    this.stockToCheck  = null  
-    if(!(this.listOfSelectedStocks.length <= 0)){
+    this.stockToCheck  = null 
+    if(this.hasElementBeenAdded){
       this.fetchDataOfSelectedStocks();
+    }else{
+      this.hasElementBeenAdded = true
+      this.fetchDataOfSelectedStocks();
+      window.setInterval(() => {
+          this.fetchDataOfSelectedStocks()
+      }, 5000)    
     }
     },
 
 
   deleteFunc(index) {
-        console.log("Reached delete function")
     this.showErrorMessage = false
     console.log(this.listOfSelectedStocks[index])
-    this.listOfSelectedStocks.splice(this.listOfSelectedStocks.indexOf(this.listOfSelectedStocks[index]),1)
+    this.listOfSelectedStocks.splice(index,1)
+    this.companyNames.splice(index,1)
     if(!(this.listOfSelectedStocks.length <= 0)){
       this.fetchDataOfSelectedStocks();
     }else{
@@ -112,12 +129,15 @@ export default {
         );
         this.dataOfSelectedStocks = response.data;
         const stockValues = []
+        
         for(let eachSymbol of this.listOfSelectedStocks){
           stockValues.push({
             symbol:eachSymbol,
-            value:this.dataOfSelectedStocks[eachSymbol].quote.iexRealtimePrice
+            value:this.dataOfSelectedStocks[eachSymbol].quote.iexRealtimePrice,
+            companyname: this.dataOfSelectedStocks[eachSymbol].quote.companyName
           })
         }
+        this.companyNames = stockValues.map( eachItem => {return eachItem.companyname})
         this.values= stockValues.map( eachItem => {return eachItem.value})
         console.log("this.stockValues",stockValues);
         this.series = [{
@@ -134,16 +154,6 @@ export default {
         console.log(error);
       }
     }
-  },
-
-
-  mounted() {
-    if(!(this.listOfSelectedStocks.length <= 0)){
-      this.fetchDataOfSelectedStocks();
-    }
-  //   window.setInterval(() => {
-  //         this.fetchDataOfSelectedStocks()
-  // }, 5000)
   }
 }
 </script>
@@ -184,7 +194,7 @@ a {
   justify-content: center;
 }
 .stock-list{
-  width:20%;
+  width:30%;
 }
 .stock-list li{
  display: flex;
@@ -195,5 +205,27 @@ a {
 .stock-list li span{
   align-self:center;
   margin-right: 1rem;
+}
+.inputforstockcode input{
+  width: 30%;
+  height:40px;
+  margin-right: 12px;
+}
+.inputforstockcode button{
+}
+.inputforstockcode {
+  display: flex;
+  justify-content: center;
+}
+.addbutton{
+  background-color: #76d176;
+  color: white;
+  border:none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  border-radius:5px;
+  width:100px;
 }
 </style>
