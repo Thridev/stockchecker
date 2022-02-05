@@ -133,7 +133,7 @@ export default {
     async fetchDataOfSelectedStocks() {
       try {
         const response = await axios.get(
-          "https://cloud.iexapis.com/stable/stock/market/batch?types=quote&token=pk_044db279039d465eb16ff69f5b0ead45&symbols=" +
+          "https://cloud.iexapis.com/stable/stock/market/batch?types=quote&token=pk_86d1737824604793af664befbbccb245&symbols=" +
             this.listOfSelectedStocks
         );
         this.dataOfSelectedStocks = response.data;
