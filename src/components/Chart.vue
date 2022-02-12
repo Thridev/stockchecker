@@ -32,8 +32,7 @@
         <li v-for="(obs, index) in listOfSelectedStocks" :key="index">
           <span
             ><span>{{ obs }}</span>
-            <span>({{ companyNames[index] }})</span></span
-          >
+            <span>({{ companyNames[index] }})</span></span>
           <button class="button" v-on:click="deleteFunc(index)">Delete</button>
         </li>
       </ul>
@@ -142,7 +141,7 @@ export default {
         for (let eachSymbol of this.listOfSelectedStocks) {
           stockValues.push({
             symbol: eachSymbol,
-            value: this.dataOfSelectedStocks[eachSymbol].quote.iexRealtimePrice,
+            value: this.dataOfSelectedStocks[eachSymbol].quote.latestPrice,
             companyname:
               this.dataOfSelectedStocks[eachSymbol].quote.companyName,
           });
