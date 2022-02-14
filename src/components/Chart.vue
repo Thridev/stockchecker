@@ -132,7 +132,7 @@ export default {
     async fetchDataOfSelectedStocks() {
       try {
         const response = await axios.get(
-          "https://cloud.iexapis.com/stable/stock/market/batch?types=quote&token=pk_86d1737824604793af664befbbccb245&symbols=" +
+          "https://cloud.iexapis.com/stable/stock/market/batch?types=quote&token=pk_13b5ad79cf344553a74ab7f5c3cf1eaa&symbols=" +
             this.listOfSelectedStocks
         );
         this.dataOfSelectedStocks = response.data;
@@ -212,7 +212,7 @@ a {
 .stock-list li {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 12px 0px;
   border-bottom: 1px solid #c0c0c0;
 }
 .stock-list li span {
@@ -236,7 +236,7 @@ a {
   border: none;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
+  display: inline;
   cursor: pointer;
   border-radius: 5px;
   width: 100px;
